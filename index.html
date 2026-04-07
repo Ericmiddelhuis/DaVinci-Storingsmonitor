@@ -412,6 +412,112 @@
   .export-btn.loading .btn-icon { display: none; }
 
   @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── HISTORY PANEL ── */
+  .history-panel {
+    background: var(--surface); border: 1px solid var(--border);
+    margin-bottom: 28px; overflow: hidden;
+  }
+
+  .history-panel-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 20px; background: var(--surface2);
+    border-bottom: 1px solid var(--border); cursor: pointer;
+    user-select: none;
+  }
+
+  .history-panel-header:hover { background: #1e2330; }
+
+  .history-panel-title {
+    font-family: var(--display); font-size: 14px; font-weight: 700;
+    display: flex; align-items: center; gap: 10px;
+  }
+
+  .history-count-badge {
+    font-family: var(--mono); font-size: 10px;
+    background: rgba(77,159,255,0.12); color: var(--scope);
+    border: 1px solid rgba(77,159,255,0.25); padding: 2px 8px;
+  }
+
+  .history-chevron {
+    font-size: 12px; color: var(--muted); transition: transform 0.2s;
+  }
+
+  .history-chevron.open { transform: rotate(180deg); }
+
+  .history-body { display: none; }
+  .history-body.open { display: block; }
+
+  .history-list { padding: 12px; display: flex; flex-direction: column; gap: 6px; }
+
+  .history-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 14px;
+    border: 1px solid var(--border); background: var(--bg);
+    cursor: pointer; transition: all 0.15s;
+  }
+
+  .history-item:hover { border-color: var(--scope); background: rgba(77,159,255,0.04); }
+  .history-item.active-snap { border-color: var(--accent); background: rgba(255,77,0,0.05); }
+  .history-item.compare-snap { border-color: var(--persist); background: rgba(255,184,0,0.05); }
+
+  .history-item-date {
+    font-family: var(--mono); font-size: 12px; font-weight: 500;
+    color: var(--text); min-width: 90px;
+  }
+
+  .history-item-meta {
+    font-family: var(--mono); font-size: 10px; color: var(--muted);
+    flex: 1;
+  }
+
+  .history-item-storing {
+    font-family: var(--mono); font-size: 11px; font-weight: 500;
+    color: var(--accent);
+  }
+
+  .history-item-tag {
+    font-family: var(--mono); font-size: 9px; letter-spacing: 0.08em;
+    text-transform: uppercase; padding: 2px 7px; border: 1px solid;
+  }
+
+  .history-item-tag.current { color: var(--accent); border-color: rgba(255,77,0,0.3); background: rgba(255,77,0,0.08); }
+  .history-item-tag.compare { color: var(--persist); border-color: rgba(255,184,0,0.3); background: rgba(255,184,0,0.08); }
+
+  .history-actions {
+    display: flex; gap: 6px; margin-left: auto;
+  }
+
+  .history-action-btn {
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.06em;
+    text-transform: uppercase; padding: 4px 10px;
+    border: 1px solid; cursor: pointer; background: none;
+    transition: all 0.15s;
+  }
+
+  .history-action-btn.view-btn { color: var(--scope); border-color: rgba(77,159,255,0.3); }
+  .history-action-btn.view-btn:hover { background: rgba(77,159,255,0.1); }
+  .history-action-btn.cmp-btn  { color: var(--persist); border-color: rgba(255,184,0,0.3); }
+  .history-action-btn.cmp-btn:hover  { background: rgba(255,184,0,0.1); }
+  .history-action-btn.del-btn  { color: var(--muted); border-color: rgba(90,96,112,0.3); }
+  .history-action-btn.del-btn:hover  { color: #ff4444; border-color: rgba(255,68,68,0.4); }
+
+  .history-empty {
+    font-family: var(--mono); font-size: 11px; color: var(--muted);
+    padding: 20px; text-align: center;
+  }
+
+  /* Active compare indicator in date-bar */
+  .compare-indicator {
+    display: none; align-items: center; gap: 6px;
+    font-family: var(--mono); font-size: 10px;
+    color: var(--persist); background: rgba(255,184,0,0.08);
+    border: 1px solid rgba(255,184,0,0.25); padding: 4px 10px;
+    cursor: pointer;
+  }
+
+  .compare-indicator:hover { background: rgba(255,184,0,0.15); }
+  .compare-indicator.visible { display: inline-flex; }
 </style>
 </head>
 <body>
@@ -433,6 +539,9 @@
         <span class="meta-pill scope">
           <span class="meta-dot"></span>
           DaVinci-scope: 315 lussen vast
+        </span>
+        <span class="compare-indicator" id="compare-indicator" onclick="clearCompare()">
+          ⚖ Vergelijking met: <span id="compare-indicator-date">—</span> &nbsp;✕
         </span>
       </div>
     </div>
@@ -464,6 +573,20 @@
     <div class="empty-sub">
       Importeer een Storingslijst Excel. Elke nieuwe import wordt vergeleken met de vorige.<br><br>
       Alleen <strong style="color:var(--scope)">315 in-scope lussen</strong> (DaVinci) worden meegenomen.
+    </div>
+  </div>
+
+  <!-- HISTORY PANEL — zichtbaar zodra er snapshots zijn -->
+  <div class="history-panel" id="history-panel" style="display:none">
+    <div class="history-panel-header" onclick="toggleHistoryPanel()">
+      <div class="history-panel-title">
+        Opgeslagen imports
+        <span class="history-count-badge" id="history-count-badge">0</span>
+      </div>
+      <span class="history-chevron" id="history-chevron">▼</span>
+    </div>
+    <div class="history-body" id="history-body">
+      <div class="history-list" id="history-list"></div>
     </div>
   </div>
 
@@ -731,27 +854,74 @@ const SCOPE_SET = new Set([
 ]);
 
 // ══════════════════════════════════════════════════════════════
-//  STATE — in-memory history (per sessie)
-//  history = [ { date, storingSet (Set of wpCodes), rows: [...] }, ... ]
-//  gesorteerd op datum DESC (meest recent eerst)
+//  PERSISTENTIE via localStorage
+//  Slaat snapshots op als JSON. storingSet wordt als Array opgeslagen
+//  en bij laden terug omgezet naar Set.
+//  Max ~4MB per snapshot — ruim voldoende voor deze data.
 // ══════════════════════════════════════════════════════════════
-let history = [];       // alle geïmporteerde snapshots
-let currentRows = [];   // volledige in-scope storing rows voor huidige datum
-let prevStoringSet = null; // Set<wpCode> van vorige import
+const LS_KEY = 'davinci_storings_history';
 
-// Vergelijkingstabellen (worden gevuld na 2e import)
-let compNew     = [];   // nieuw in storing
-let compPersist = [];   // nog steeds in storing
-let compFixed   = [];   // hersteld
+function saveToStorage(snapshots) {
+  try {
+    const serialisable = snapshots.map(s => ({
+      ...s,
+      storingSet: [...s.storingSet],   // Set → Array voor JSON
+    }));
+    localStorage.setItem(LS_KEY, JSON.stringify(serialisable));
+  } catch(e) {
+    console.warn('localStorage opslaan mislukt:', e);
+  }
+}
 
-// Tabel state
-let tableData   = [];   // actieve dataset voor tabel
-let filtered    = [];
-let sortKey     = 'luslocatie';
-let sortAsc     = true;
-let page        = 1;
-const perPage   = 25;
-let activeTab   = 'all';
+function loadFromStorage() {
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return parsed.map(s => ({
+      ...s,
+      storingSet: new Set(s.storingSet),  // Array → Set
+    }));
+  } catch(e) {
+    console.warn('localStorage laden mislukt:', e);
+    return [];
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════════════════════════
+let history = loadFromStorage();   // persistente snapshots, DESC op datum
+let activeSnapDate  = null;        // datum van weergegeven snapshot
+let compareSnapDate = null;        // datum van gekozen vergelijkingssnapshot (null = automatisch)
+
+// Vergelijkingslijsten
+let compNew     = [];
+let compPersist = [];
+let compFixed   = [];
+
+// Tabelstate
+let tableData = [];
+let filtered  = [];
+let sortKey   = 'luslocatie';
+let sortAsc   = true;
+let page      = 1;
+const perPage = 25;
+let activeTab = 'all';
+
+// ── Initialiseer UI als er al opgeslagen data is ───────────────
+window.addEventListener('DOMContentLoaded', () => {
+  if (history.length > 0) {
+    // Sorteer op datum DESC
+    history.sort((a, b) => parseDutchDate(b.date) - parseDutchDate(a.date));
+    activeSnapDate = history[0].date;
+    document.getElementById('empty-state').style.display = 'none';
+    document.getElementById('dashboard').style.display   = 'block';
+    document.getElementById('file-label').textContent    = `✓ ${history.length} import(s) geladen uit geheugen`;
+    renderHistoryPanel();
+    renderDashboard(history[0], history[0].nOutScope || 0);
+  }
+});
 
 // ── File handling ──────────────────────────────────────────────
 document.getElementById('file-input').addEventListener('change', e => {
@@ -794,8 +964,7 @@ function loadFile(file) {
         importDate = file.name.replace(/\.[^.]+$/, '');
       }
 
-      // Check if we already have this date — if so, replace it
-      const existingIdx = history.findIndex(h => h.date === importDate);
+      // Check importDate voor duplicaat (verwerkt in snapshot-blok hieronder)
 
       // Find header row
       let headerRow = -1;
@@ -858,16 +1027,24 @@ function loadFile(file) {
       // Store snapshot
       const snapshot = { date: importDate, storingSet, rows, nTotal, nOutScope, fileName: file.name };
 
+      const existingIdx = history.findIndex(h => h.date === importDate);
       if (existingIdx !== -1) {
         history[existingIdx] = snapshot;
       } else {
         history.push(snapshot);
       }
 
-      // Sort history by date (parse DD-MM-YYYY)
+      // Sorteer DESC op datum
       history.sort((a, b) => parseDutchDate(b.date) - parseDutchDate(a.date));
 
-      // Show most recent
+      // Sla op in localStorage
+      saveToStorage(history);
+
+      // Meest recente wordt actief; vergelijking reset naar automatisch
+      activeSnapDate  = importDate;
+      compareSnapDate = null;
+
+      renderHistoryPanel();
       renderDashboard(snapshot, nOutScope);
 
       label.textContent = `✓ ${file.name}`;
@@ -896,15 +1073,33 @@ function parseDutchDate(s) {
 // ── Render full dashboard from a snapshot ─────────────────────
 function renderDashboard(snap, nOutScope) {
   const { date, storingSet, rows, nTotal, fileName } = snap;
-  currentRows = rows.filter(r => r.isStoring);
 
   const nStoring = storingSet.size;
   const nOk      = nTotal - nStoring;
   const pct      = nTotal > 0 ? ((nStoring/nTotal)*100).toFixed(1) : '0.0';
 
+  // Bepaal welk vergelijkingssnapshot te gebruiken:
+  // Als compareSnapDate gezet is → gebruik die; anders de eerstvolgende oudere datum
+  let prevSnap = null;
+  if (compareSnapDate && compareSnapDate !== date) {
+    prevSnap = history.find(h => h.date === compareSnapDate) || null;
+  } else {
+    // automatisch: eerstvolgende oudere datum
+    prevSnap = history.find(h => parseDutchDate(h.date) < parseDutchDate(date)) || null;
+  }
+
   // Header date pill
   document.getElementById('header-date-pill').innerHTML =
     `<span class="meta-dot"></span>Datum data: ${date}`;
+
+  // Compare indicator in header
+  const ci = document.getElementById('compare-indicator');
+  if (prevSnap) {
+    ci.classList.add('visible');
+    document.getElementById('compare-indicator-date').textContent = prevSnap.date;
+  } else {
+    ci.classList.remove('visible');
+  }
 
   // Date bar
   document.getElementById('db-date-current').textContent = date;
@@ -912,10 +1107,7 @@ function renderDashboard(snap, nOutScope) {
   document.getElementById('db-storing').textContent      = nStoring;
   document.getElementById('db-pct').textContent          = pct + '%';
   document.getElementById('db-file').textContent         = fileName;
-
-  // Previous date
-  const prevSnap = history.find(h => h.date !== date);
-  document.getElementById('db-date-prev').textContent = prevSnap ? prevSnap.date : '—';
+  document.getElementById('db-date-prev').textContent    = prevSnap ? prevSnap.date : '—';
 
   // KPI
   anim('kpi-scope',    nTotal);
@@ -925,26 +1117,22 @@ function renderDashboard(snap, nOutScope) {
   document.getElementById('kpi-pct').textContent = pct + '%';
 
   setTimeout(() => {
-    document.getElementById('g-scope').style.width   = '100%';
-    document.getElementById('g-storing').style.width = Math.min((nStoring/nTotal)*100,100) + '%';
-    document.getElementById('g-pct').style.width     = Math.min(parseFloat(pct),100) + '%';
-    document.getElementById('g-ok').style.width      = Math.min((nOk/nTotal)*100,100) + '%';
+    document.getElementById('g-scope').style.width    = '100%';
+    document.getElementById('g-storing').style.width  = Math.min((nStoring/nTotal)*100,100) + '%';
+    document.getElementById('g-pct').style.width      = Math.min(parseFloat(pct),100) + '%';
+    document.getElementById('g-ok').style.width       = Math.min((nOk/nTotal)*100,100) + '%';
     document.getElementById('g-outscope').style.width = '100%';
   }, 60);
 
-  // Comparison
+  // Vergelijking
   compNew = []; compPersist = []; compFixed = [];
 
   if (prevSnap) {
-    const prevSet = prevSnap.storingSet;
-    const currSet = storingSet;
-
-    // Map wpCode → row for current storing rows
+    const prevSet    = prevSnap.storingSet;
+    const currSet    = storingSet;
     const currRowMap = {};
-    rows.filter(r => r.isStoring).forEach(r => { currRowMap[r.wpCode] = r; });
-
-    // Map wpCode → row for prev storing rows
     const prevRowMap = {};
+    rows.filter(r => r.isStoring).forEach(r => { currRowMap[r.wpCode] = r; });
     prevSnap.rows.filter(r => r.isStoring).forEach(r => { prevRowMap[r.wpCode] = r; });
 
     currSet.forEach(wp => {
@@ -955,48 +1143,40 @@ function renderDashboard(snap, nOutScope) {
       if (!currSet.has(wp)) compFixed.push({ ...(prevRowMap[wp]||{}), status: 'fixed' });
     });
 
-    // Show comparison banner
-    const banner = document.getElementById('compare-banner');
-    banner.style.display = 'block';
-    document.getElementById('compare-dates').textContent = `${prevSnap.date}  →  ${date}`;
+    document.getElementById('compare-banner').style.display = 'block';
+    document.getElementById('compare-dates').textContent    = `${prevSnap.date}  →  ${date}`;
     anim('cmp-new',     compNew.length);
     anim('cmp-persist', compPersist.length);
     anim('cmp-fixed',   compFixed.length);
 
-    // Tab counts
     document.getElementById('tc-all').textContent     = nStoring;
     document.getElementById('tc-new').textContent     = compNew.length;
     document.getElementById('tc-persist').textContent = compPersist.length;
     document.getElementById('tc-fixed').textContent   = compFixed.length;
-
     document.getElementById('tab-bar').style.display  = 'flex';
   } else {
-    // First import — no comparison
     document.getElementById('compare-banner').style.display = 'none';
-    document.getElementById('tab-bar').style.display = 'none';
-
-    document.getElementById('tc-all').textContent     = nStoring;
-    document.getElementById('tc-new').textContent     = '';
-    document.getElementById('tc-persist').textContent = '';
-    document.getElementById('tc-fixed').textContent   = '';
+    document.getElementById('tab-bar').style.display        = 'none';
+    document.getElementById('tc-all').textContent           = nStoring;
+    document.getElementById('tc-new').textContent           = '';
+    document.getElementById('tc-persist').textContent       = '';
+    document.getElementById('tc-fixed').textContent         = '';
   }
 
-  // Tag current rows with status
-  currentRows = rows.filter(r => r.isStoring).map(r => {
+  // Huidige rijen taggen met status
+  const currentRows = rows.filter(r => r.isStoring).map(r => {
     let status = 'storing';
     if (prevSnap) {
-      if (prevSnap.storingSet.has(r.wpCode)) status = 'persist';
-      else                                    status = 'new';
+      status = prevSnap.storingSet.has(r.wpCode) ? 'persist' : 'new';
     }
     return { ...r, status };
   });
 
-  // Add fixed rows (from prev, not in current) with status fixed
   const fixedRows = prevSnap
     ? prevSnap.rows.filter(r => r.isStoring && !storingSet.has(r.wpCode)).map(r => ({ ...r, status: 'fixed' }))
     : [];
 
-  // Breakdown (only current storing, not fixed)
+  // Breakdown
   const typeCounts = {};
   currentRows.forEach(r => { typeCounts[r.type] = (typeCounts[r.type]||0)+1; });
   const maxT = Math.max(...Object.values(typeCounts), 1);
@@ -1009,7 +1189,7 @@ function renderDashboard(snap, nOutScope) {
       </div>`).join('') ||
     '<div class="no-data">Geen storingen in scope</div>';
 
-  // Populate filters from ALL visible rows
+  // Filters vullen
   const allVisible = [...currentRows, ...fixedRows];
   const types = [...new Set(allVisible.map(r=>r.type))].sort();
   const oss   = [...new Set(allVisible.map(r=>r.os))].sort();
@@ -1018,16 +1198,13 @@ function renderDashboard(snap, nOutScope) {
   document.getElementById('filter-os').innerHTML =
     '<option value="">Alle onderstations</option>' + oss.map(o=>`<option>${o}</option>`).join('');
 
-  // Store for tab switching
-  window._allRows    = allVisible;
+  window._allRows     = allVisible;
   window._currentRows = currentRows;
   window._fixedRows   = fixedRows;
 
-  // Activate "all" tab
   switchTab('all');
-
-  // Enable export buttons
   enableExports(date);
+  renderHistoryPanel();
 }
 
 // ── Tab switching ──────────────────────────────────────────────
@@ -1157,6 +1334,102 @@ function anim(id, target) {
     if(t<1) requestAnimationFrame(step);
   }
   requestAnimationFrame(step);
+}
+
+// ── History panel ──────────────────────────────────────────────
+function renderHistoryPanel() {
+  const panel = document.getElementById('history-panel');
+  const list  = document.getElementById('history-list');
+  const badge = document.getElementById('history-count-badge');
+
+  if (history.length === 0) { panel.style.display = 'none'; return; }
+  panel.style.display = 'block';
+  badge.textContent   = history.length;
+
+  // Haal de actieve en vergelijkingssnapshot op voor markering
+  const activeDateNow  = activeSnapDate;
+  const compareDateNow = compareSnapDate ||
+    (() => {
+      // automatisch: eerstvolgende oudere datum tov actieve
+      const older = history.find(h => parseDutchDate(h.date) < parseDutchDate(activeDateNow));
+      return older ? older.date : null;
+    })();
+
+  list.innerHTML = history.map(snap => {
+    const isActive  = snap.date === activeDateNow;
+    const isCompare = snap.date === compareDateNow && !isActive;
+    const nStr = snap.storingSet.size;
+
+    let tags = '';
+    if (isActive)  tags += `<span class="history-item-tag current">Huidig</span>`;
+    if (isCompare) tags += `<span class="history-item-tag compare">Vergelijking</span>`;
+
+    return `
+      <div class="history-item ${isActive?'active-snap':''} ${isCompare?'compare-snap':''}">
+        <div class="history-item-date">${snap.date}</div>
+        <div class="history-item-meta">${snap.fileName || ''}</div>
+        <div class="history-item-storing">${nStr} storing${nStr!==1?'en':''}</div>
+        ${tags}
+        <div class="history-actions">
+          ${!isActive ? `<button class="history-action-btn view-btn" onclick="viewSnapshot('${snap.date}')">Bekijk</button>` : ''}
+          ${!isActive && !isCompare ? `<button class="history-action-btn cmp-btn" onclick="setCompare('${snap.date}')">Vergelijk</button>` : ''}
+          ${isCompare ? `<button class="history-action-btn cmp-btn" onclick="clearCompare()">Wis vergelijking</button>` : ''}
+          <button class="history-action-btn del-btn" onclick="deleteSnapshot('${snap.date}')">✕</button>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function toggleHistoryPanel() {
+  const body    = document.getElementById('history-body');
+  const chevron = document.getElementById('history-chevron');
+  const open    = body.classList.toggle('open');
+  chevron.classList.toggle('open', open);
+}
+
+function viewSnapshot(date) {
+  const snap = history.find(h => h.date === date);
+  if (!snap) return;
+  activeSnapDate  = date;
+  compareSnapDate = null;   // reset naar automatisch
+  renderDashboard(snap, snap.nOutScope || 0);
+}
+
+function setCompare(date) {
+  compareSnapDate = date;
+  // Herlaad het actieve snapshot met de nieuwe vergelijking
+  const snap = history.find(h => h.date === activeSnapDate);
+  if (snap) renderDashboard(snap, snap.nOutScope || 0);
+}
+
+function clearCompare() {
+  compareSnapDate = null;
+  const snap = history.find(h => h.date === activeSnapDate);
+  if (snap) renderDashboard(snap, snap.nOutScope || 0);
+}
+
+function deleteSnapshot(date) {
+  if (!confirm(`Snapshot van ${date} verwijderen?`)) return;
+  history = history.filter(h => h.date !== date);
+  saveToStorage(history);
+
+  // Als het actieve snapshot verwijderd is, laad het volgende
+  if (activeSnapDate === date) {
+    activeSnapDate  = history.length > 0 ? history[0].date : null;
+    compareSnapDate = null;
+  }
+  if (compareSnapDate === date) compareSnapDate = null;
+
+  if (history.length === 0) {
+    document.getElementById('dashboard').style.display   = 'none';
+    document.getElementById('empty-state').style.display = 'flex';
+    document.getElementById('history-panel').style.display = 'none';
+    document.getElementById('file-label').textContent = 'Sleep een .xls of .xlsx bestand hierheen';
+  } else {
+    const snap = history.find(h => h.date === activeSnapDate) || history[0];
+    activeSnapDate = snap.date;
+    renderDashboard(snap, snap.nOutScope || 0);
+  }
 }
 
 // ── Enable export buttons after data is loaded ─────────────────

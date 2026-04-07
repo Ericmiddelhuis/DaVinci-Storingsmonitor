@@ -418,213 +418,66 @@
     background: var(--surface); border: 1px solid var(--border);
     margin-bottom: 28px; overflow: hidden;
   }
-
   .history-panel-header {
     display: flex; align-items: center; justify-content: space-between;
     padding: 12px 20px; background: var(--surface2);
-    border-bottom: 1px solid var(--border); cursor: pointer;
-    user-select: none;
+    border-bottom: 1px solid var(--border); cursor: pointer; user-select: none;
   }
-
   .history-panel-header:hover { background: #1e2330; }
-
   .history-panel-title {
     font-family: var(--display); font-size: 14px; font-weight: 700;
     display: flex; align-items: center; gap: 10px;
   }
-
   .history-count-badge {
     font-family: var(--mono); font-size: 10px;
     background: rgba(77,159,255,0.12); color: var(--scope);
     border: 1px solid rgba(77,159,255,0.25); padding: 2px 8px;
   }
-
-  .history-chevron {
-    font-size: 12px; color: var(--muted); transition: transform 0.2s;
-  }
-
+  .history-chevron { font-size: 12px; color: var(--muted); transition: transform 0.2s; }
   .history-chevron.open { transform: rotate(180deg); }
-
   .history-body { display: none; }
   .history-body.open { display: block; }
-
   .history-list { padding: 12px; display: flex; flex-direction: column; gap: 6px; }
-
   .history-item {
-    display: flex; align-items: center; gap: 12px;
-    padding: 10px 14px;
-    border: 1px solid var(--border); background: var(--bg);
-    cursor: pointer; transition: all 0.15s;
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    padding: 10px 14px; border: 1px solid var(--border); background: var(--bg);
+    cursor: default; transition: all 0.15s;
   }
-
   .history-item:hover { border-color: var(--scope); background: rgba(77,159,255,0.04); }
-  .history-item.active-snap { border-color: var(--accent); background: rgba(255,77,0,0.05); }
+  .history-item.active-snap  { border-color: var(--accent); background: rgba(255,77,0,0.05); }
   .history-item.compare-snap { border-color: var(--persist); background: rgba(255,184,0,0.05); }
-
-  .history-item-date {
-    font-family: var(--mono); font-size: 12px; font-weight: 500;
-    color: var(--text); min-width: 90px;
-  }
-
-  .history-item-meta {
-    font-family: var(--mono); font-size: 10px; color: var(--muted);
-    flex: 1;
-  }
-
-  .history-item-storing {
-    font-family: var(--mono); font-size: 11px; font-weight: 500;
-    color: var(--accent);
-  }
-
+  .history-item-date  { font-family: var(--mono); font-size: 12px; font-weight: 500; color: var(--text); min-width: 90px; }
+  .history-item-meta  { font-family: var(--mono); font-size: 10px; color: var(--muted); flex: 1; }
+  .history-item-storing { font-family: var(--mono); font-size: 11px; font-weight: 500; color: var(--accent); }
   .history-item-tag {
     font-family: var(--mono); font-size: 9px; letter-spacing: 0.08em;
     text-transform: uppercase; padding: 2px 7px; border: 1px solid;
   }
-
   .history-item-tag.current { color: var(--accent); border-color: rgba(255,77,0,0.3); background: rgba(255,77,0,0.08); }
   .history-item-tag.compare { color: var(--persist); border-color: rgba(255,184,0,0.3); background: rgba(255,184,0,0.08); }
-
-  .history-actions {
-    display: flex; gap: 6px; margin-left: auto;
-  }
-
+  .history-actions { display: flex; gap: 6px; margin-left: auto; }
   .history-action-btn {
     font-family: var(--mono); font-size: 10px; letter-spacing: 0.06em;
     text-transform: uppercase; padding: 4px 10px;
-    border: 1px solid; cursor: pointer; background: none;
-    transition: all 0.15s;
+    border: 1px solid; cursor: pointer; background: none; transition: all 0.15s;
   }
-
   .history-action-btn.view-btn { color: var(--scope); border-color: rgba(77,159,255,0.3); }
   .history-action-btn.view-btn:hover { background: rgba(77,159,255,0.1); }
   .history-action-btn.cmp-btn  { color: var(--persist); border-color: rgba(255,184,0,0.3); }
   .history-action-btn.cmp-btn:hover  { background: rgba(255,184,0,0.1); }
   .history-action-btn.del-btn  { color: var(--muted); border-color: rgba(90,96,112,0.3); }
   .history-action-btn.del-btn:hover  { color: #ff4444; border-color: rgba(255,68,68,0.4); }
-
-  .history-empty {
-    font-family: var(--mono); font-size: 11px; color: var(--muted);
-    padding: 20px; text-align: center;
-  }
-
-  /* Active compare indicator in date-bar */
   .compare-indicator {
     display: none; align-items: center; gap: 6px;
     font-family: var(--mono); font-size: 10px;
     color: var(--persist); background: rgba(255,184,0,0.08);
-    border: 1px solid rgba(255,184,0,0.25); padding: 4px 10px;
-    cursor: pointer;
+    border: 1px solid rgba(255,184,0,0.25); padding: 4px 10px; cursor: pointer;
   }
-
   .compare-indicator:hover { background: rgba(255,184,0,0.15); }
   .compare-indicator.visible { display: inline-flex; }
-
-  /* ── LOGIN SCHERM ── */
-  #login-screen {
-    position: fixed; inset: 0; z-index: 9999;
-    background: var(--bg);
-    display: flex; align-items: center; justify-content: center;
-  }
-
-  #login-screen::before {
-    content: '';
-    position: fixed; inset: 0;
-    background-image:
-      linear-gradient(rgba(255,77,0,0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255,77,0,0.03) 1px, transparent 1px);
-    background-size: 40px 40px;
-    pointer-events: none;
-  }
-
-  .login-box {
-    position: relative; z-index: 1;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    padding: 48px 40px 40px;
-    width: 100%; max-width: 400px;
-    display: flex; flex-direction: column; gap: 20px;
-    clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px));
-  }
-
-  .login-brand {
-    font-family: var(--mono); font-size: 10px; letter-spacing: 0.2em;
-    text-transform: uppercase; color: var(--accent);
-    background: rgba(255,77,0,0.08); border: 1px solid rgba(255,77,0,0.2);
-    padding: 4px 10px; display: inline-block; width: fit-content;
-  }
-
-  .login-title {
-    font-family: var(--display); font-size: 28px; font-weight: 800;
-    line-height: 1.1; letter-spacing: -0.02em; margin-top: -4px;
-  }
-
-  .login-title span { color: var(--accent); }
-
-  .login-sub {
-    font-family: var(--mono); font-size: 11px; color: var(--muted);
-    margin-top: -10px; line-height: 1.6;
-  }
-
-  .login-field { display: flex; flex-direction: column; gap: 8px; }
-
-  .login-label {
-    font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em;
-    text-transform: uppercase; color: var(--muted);
-  }
-
-  .login-input {
-    background: var(--bg); border: 1px solid var(--border);
-    color: var(--text); font-family: var(--mono); font-size: 14px;
-    padding: 12px 16px; outline: none; width: 100%;
-    transition: border 0.15s; letter-spacing: 0.1em;
-  }
-
-  .login-input:focus { border-color: var(--accent); }
-
-  .login-btn {
-    background: var(--accent); color: #fff;
-    font-family: var(--mono); font-size: 12px; letter-spacing: 0.12em;
-    text-transform: uppercase; font-weight: 500;
-    padding: 14px; border: none; cursor: pointer;
-    transition: background 0.15s, transform 0.1s; width: 100%;
-    clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
-  }
-
-  .login-btn:hover { background: #ff6520; transform: translateY(-1px); }
-  .login-btn:active { transform: translateY(0); }
-
-  .login-error {
-    font-family: var(--mono); font-size: 11px; color: var(--accent);
-    background: rgba(255,77,0,0.08); border: 1px solid rgba(255,77,0,0.2);
-    padding: 8px 12px; display: none;
-  }
-
-  .login-error.visible { display: block; animation: fadeUp 0.2s ease; }
-
-  .login-footer {
-    font-family: var(--mono); font-size: 10px; color: var(--muted);
-    text-align: center; border-top: 1px solid var(--border); padding-top: 16px;
-  }
 </style>
 </head>
 <body>
-
-<!-- LOGIN SCHERM -->
-<div id="login-screen">
-  <div class="login-box">
-    <div class="login-brand">▲ Rijkswaterstaat · DaVinci</div>
-    <div class="login-title">Storings<span>monitor</span></div>
-    <div class="login-sub">Beveiligde omgeving. Voer het toegangswachtwoord in om door te gaan.</div>
-    <div class="login-field">
-      <label class="login-label" for="login-pw">Wachtwoord</label>
-      <input class="login-input" type="password" id="login-pw" placeholder="••••••••••"
-             onkeydown="if(event.key==='Enter') doLogin()">
-    </div>
-    <div class="login-error" id="login-error">Onjuist wachtwoord. Probeer opnieuw.</div>
-    <button class="login-btn" onclick="doLogin()">Inloggen →</button>
-    <div class="login-footer">Detectielussen Storingsmonitor · DaVinci Scope</div>
-  </div>
-</div>
 
 <div class="drag-overlay" id="drag-overlay">⊕ Laat los om te importeren</div>
 
@@ -680,7 +533,7 @@
     </div>
   </div>
 
-  <!-- HISTORY PANEL — zichtbaar zodra er snapshots zijn -->
+  <!-- HISTORY PANEL -->
   <div class="history-panel" id="history-panel" style="display:none">
     <div class="history-panel-header" onclick="toggleHistoryPanel()">
       <div class="history-panel-title">
@@ -872,46 +725,6 @@
 
 <script>
 // ══════════════════════════════════════════════════════════════
-//  AUTHENTICATIE
-//  Wachtwoord wordt nooit in leesbare tekst opgeslagen.
-//  SHA-256 hash wordt vergeleken via de Web Crypto API.
-//  Sessie wordt onthouden in sessionStorage (verdwijnt bij sluiten tab).
-// ══════════════════════════════════════════════════════════════
-const PW_HASH = 'e3a376f437baeb0bd34f4ccb7b2d1837397029ad68914f4691fa35e9be3a9928';
-const SESSION_KEY = 'davinci_auth';
-
-async function sha256(text) {
-  const buf  = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
-  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
-}
-
-async function doLogin() {
-  const input = document.getElementById('login-pw').value;
-  const error = document.getElementById('login-error');
-  if (!input) { error.classList.add('visible'); error.textContent = 'Voer een wachtwoord in.'; return; }
-
-  const hash = await sha256(input);
-  if (hash === PW_HASH) {
-    sessionStorage.setItem(SESSION_KEY, '1');
-    document.getElementById('login-screen').style.display = 'none';
-    document.getElementById('login-pw').value = '';
-    error.classList.remove('visible');
-  } else {
-    error.classList.add('visible');
-    error.textContent = 'Onjuist wachtwoord. Probeer opnieuw.';
-    document.getElementById('login-pw').value = '';
-    document.getElementById('login-pw').focus();
-  }
-}
-
-// Check of sessie al geauthenticeerd is (zelfde tabblad/sessie)
-(function checkSession() {
-  if (sessionStorage.getItem(SESSION_KEY) === '1') {
-    document.getElementById('login-screen').style.display = 'none';
-  }
-})();
-
-// ══════════════════════════════════════════════════════════════
 //  SCOPE — 315 in-scope WP(BPS)-codes uit Scope_DaVinci.xlsx
 //  Vast; wijzigt niet bij nieuwe imports.
 // ══════════════════════════════════════════════════════════════
@@ -999,52 +812,36 @@ const SCOPE_SET = new Set([
 
 // ══════════════════════════════════════════════════════════════
 //  PERSISTENTIE via localStorage
-//  Slaat snapshots op als JSON. storingSet wordt als Array opgeslagen
-//  en bij laden terug omgezet naar Set.
-//  Max ~4MB per snapshot — ruim voldoende voor deze data.
 // ══════════════════════════════════════════════════════════════
 const LS_KEY = 'davinci_storings_history';
 
-function saveToStorage(snapshots) {
+function saveToStorage(snaps) {
   try {
-    const serialisable = snapshots.map(s => ({
-      ...s,
-      storingSet: [...s.storingSet],   // Set → Array voor JSON
-    }));
-    localStorage.setItem(LS_KEY, JSON.stringify(serialisable));
-  } catch(e) {
-    console.warn('localStorage opslaan mislukt:', e);
-  }
+    localStorage.setItem(LS_KEY, JSON.stringify(
+      snaps.map(s => ({ ...s, storingSet: [...s.storingSet] }))
+    ));
+  } catch(e) { console.warn('localStorage opslaan mislukt:', e); }
 }
 
 function loadFromStorage() {
   try {
     const raw = localStorage.getItem(LS_KEY);
     if (!raw) return [];
-    const parsed = JSON.parse(raw);
-    return parsed.map(s => ({
-      ...s,
-      storingSet: new Set(s.storingSet),  // Array → Set
-    }));
-  } catch(e) {
-    console.warn('localStorage laden mislukt:', e);
-    return [];
-  }
+    return JSON.parse(raw).map(s => ({ ...s, storingSet: new Set(s.storingSet) }));
+  } catch(e) { return []; }
 }
 
 // ══════════════════════════════════════════════════════════════
 //  STATE
 // ══════════════════════════════════════════════════════════════
-let history = loadFromStorage();   // persistente snapshots, DESC op datum
-let activeSnapDate  = null;        // datum van weergegeven snapshot
-let compareSnapDate = null;        // datum van gekozen vergelijkingssnapshot (null = automatisch)
+let history        = loadFromStorage();
+let activeSnapDate = history.length > 0 ? history[0].date : null;
+let compareSnapDate= null;
 
-// Vergelijkingslijsten
 let compNew     = [];
 let compPersist = [];
 let compFixed   = [];
 
-// Tabelstate
 let tableData = [];
 let filtered  = [];
 let sortKey   = 'luslocatie';
@@ -1053,15 +850,15 @@ let page      = 1;
 const perPage = 25;
 let activeTab = 'all';
 
-// ── Initialiseer UI als er al opgeslagen data is ───────────────
+// Herstel opgeslagen data bij laden pagina
 window.addEventListener('DOMContentLoaded', () => {
   if (history.length > 0) {
-    // Sorteer op datum DESC
-    history.sort((a, b) => parseDutchDate(b.date) - parseDutchDate(a.date));
+    history.sort((a,b) => parseDutchDate(b.date) - parseDutchDate(a.date));
     activeSnapDate = history[0].date;
     document.getElementById('empty-state').style.display = 'none';
     document.getElementById('dashboard').style.display   = 'block';
-    document.getElementById('file-label').textContent    = `✓ ${history.length} import(s) geladen uit geheugen`;
+    document.getElementById('file-label').textContent    =
+      `✓ ${history.length} import(s) geladen uit geheugen`;
     renderHistoryPanel();
     renderDashboard(history[0], history[0].nOutScope || 0);
   }
@@ -1107,8 +904,6 @@ function loadFile(file) {
       } else {
         importDate = file.name.replace(/\.[^.]+$/, '');
       }
-
-      // Check importDate voor duplicaat (verwerkt in snapshot-blok hieronder)
 
       // Find header row
       let headerRow = -1;
@@ -1168,23 +963,15 @@ function loadFile(file) {
         if (isStoring) storingSet.add(wpCode);
       }
 
-      // Store snapshot
+      // Sla snapshot op (overschrijf bij zelfde datum)
       const snapshot = { date: importDate, storingSet, rows, nTotal, nOutScope, fileName: file.name };
-
       const existingIdx = history.findIndex(h => h.date === importDate);
-      if (existingIdx !== -1) {
-        history[existingIdx] = snapshot;
-      } else {
-        history.push(snapshot);
-      }
+      if (existingIdx !== -1) history[existingIdx] = snapshot;
+      else history.push(snapshot);
 
-      // Sorteer DESC op datum
       history.sort((a, b) => parseDutchDate(b.date) - parseDutchDate(a.date));
-
-      // Sla op in localStorage
       saveToStorage(history);
 
-      // Meest recente wordt actief; vergelijking reset naar automatisch
       activeSnapDate  = importDate;
       compareSnapDate = null;
 
@@ -1222,21 +1009,19 @@ function renderDashboard(snap, nOutScope) {
   const nOk      = nTotal - nStoring;
   const pct      = nTotal > 0 ? ((nStoring/nTotal)*100).toFixed(1) : '0.0';
 
-  // Bepaal welk vergelijkingssnapshot te gebruiken:
-  // Als compareSnapDate gezet is → gebruik die; anders de eerstvolgende oudere datum
+  // Bepaal vergelijkingssnapshot: handmatig gekozen of automatisch de vorige datum
   let prevSnap = null;
   if (compareSnapDate && compareSnapDate !== date) {
     prevSnap = history.find(h => h.date === compareSnapDate) || null;
   } else {
-    // automatisch: eerstvolgende oudere datum
     prevSnap = history.find(h => parseDutchDate(h.date) < parseDutchDate(date)) || null;
   }
 
-  // Header date pill
+  // Header
   document.getElementById('header-date-pill').innerHTML =
     `<span class="meta-dot"></span>Datum data: ${date}`;
 
-  // Compare indicator in header
+  // Compare indicator
   const ci = document.getElementById('compare-indicator');
   if (prevSnap) {
     ci.classList.add('visible');
@@ -1261,22 +1046,26 @@ function renderDashboard(snap, nOutScope) {
   document.getElementById('kpi-pct').textContent = pct + '%';
 
   setTimeout(() => {
-    document.getElementById('g-scope').style.width    = '100%';
-    document.getElementById('g-storing').style.width  = Math.min((nStoring/nTotal)*100,100) + '%';
-    document.getElementById('g-pct').style.width      = Math.min(parseFloat(pct),100) + '%';
-    document.getElementById('g-ok').style.width       = Math.min((nOk/nTotal)*100,100) + '%';
+    document.getElementById('g-scope').style.width   = '100%';
+    document.getElementById('g-storing').style.width = Math.min((nStoring/nTotal)*100,100) + '%';
+    document.getElementById('g-pct').style.width     = Math.min(parseFloat(pct),100) + '%';
+    document.getElementById('g-ok').style.width      = Math.min((nOk/nTotal)*100,100) + '%';
     document.getElementById('g-outscope').style.width = '100%';
   }, 60);
 
-  // Vergelijking
+  // Comparison
   compNew = []; compPersist = []; compFixed = [];
 
   if (prevSnap) {
-    const prevSet    = prevSnap.storingSet;
-    const currSet    = storingSet;
+    const prevSet = prevSnap.storingSet;
+    const currSet = storingSet;
+
+    // Map wpCode → row for current storing rows
     const currRowMap = {};
-    const prevRowMap = {};
     rows.filter(r => r.isStoring).forEach(r => { currRowMap[r.wpCode] = r; });
+
+    // Map wpCode → row for prev storing rows
+    const prevRowMap = {};
     prevSnap.rows.filter(r => r.isStoring).forEach(r => { prevRowMap[r.wpCode] = r; });
 
     currSet.forEach(wp => {
@@ -1287,40 +1076,48 @@ function renderDashboard(snap, nOutScope) {
       if (!currSet.has(wp)) compFixed.push({ ...(prevRowMap[wp]||{}), status: 'fixed' });
     });
 
-    document.getElementById('compare-banner').style.display = 'block';
-    document.getElementById('compare-dates').textContent    = `${prevSnap.date}  →  ${date}`;
+    // Show comparison banner
+    const banner = document.getElementById('compare-banner');
+    banner.style.display = 'block';
+    document.getElementById('compare-dates').textContent = `${prevSnap.date}  →  ${date}`;
     anim('cmp-new',     compNew.length);
     anim('cmp-persist', compPersist.length);
     anim('cmp-fixed',   compFixed.length);
 
+    // Tab counts
     document.getElementById('tc-all').textContent     = nStoring;
     document.getElementById('tc-new').textContent     = compNew.length;
     document.getElementById('tc-persist').textContent = compPersist.length;
     document.getElementById('tc-fixed').textContent   = compFixed.length;
+
     document.getElementById('tab-bar').style.display  = 'flex';
   } else {
+    // First import — no comparison
     document.getElementById('compare-banner').style.display = 'none';
-    document.getElementById('tab-bar').style.display        = 'none';
-    document.getElementById('tc-all').textContent           = nStoring;
-    document.getElementById('tc-new').textContent           = '';
-    document.getElementById('tc-persist').textContent       = '';
-    document.getElementById('tc-fixed').textContent         = '';
+    document.getElementById('tab-bar').style.display = 'none';
+
+    document.getElementById('tc-all').textContent     = nStoring;
+    document.getElementById('tc-new').textContent     = '';
+    document.getElementById('tc-persist').textContent = '';
+    document.getElementById('tc-fixed').textContent   = '';
   }
 
-  // Huidige rijen taggen met status
+  // Tag current rows with status
   const currentRows = rows.filter(r => r.isStoring).map(r => {
     let status = 'storing';
     if (prevSnap) {
-      status = prevSnap.storingSet.has(r.wpCode) ? 'persist' : 'new';
+      if (prevSnap.storingSet.has(r.wpCode)) status = 'persist';
+      else                                    status = 'new';
     }
     return { ...r, status };
   });
 
+  // Add fixed rows (from prev, not in current) with status fixed
   const fixedRows = prevSnap
     ? prevSnap.rows.filter(r => r.isStoring && !storingSet.has(r.wpCode)).map(r => ({ ...r, status: 'fixed' }))
     : [];
 
-  // Breakdown
+  // Breakdown (only current storing, not fixed)
   const typeCounts = {};
   currentRows.forEach(r => { typeCounts[r.type] = (typeCounts[r.type]||0)+1; });
   const maxT = Math.max(...Object.values(typeCounts), 1);
@@ -1333,7 +1130,7 @@ function renderDashboard(snap, nOutScope) {
       </div>`).join('') ||
     '<div class="no-data">Geen storingen in scope</div>';
 
-  // Filters vullen
+  // Populate filters from ALL visible rows
   const allVisible = [...currentRows, ...fixedRows];
   const types = [...new Set(allVisible.map(r=>r.type))].sort();
   const oss   = [...new Set(allVisible.map(r=>r.os))].sort();
@@ -1482,44 +1279,45 @@ function anim(id, target) {
 
 // ── History panel ──────────────────────────────────────────────
 function renderHistoryPanel() {
-  const panel = document.getElementById('history-panel');
-  const list  = document.getElementById('history-list');
-  const badge = document.getElementById('history-count-badge');
+  const panel  = document.getElementById('history-panel');
+  const list   = document.getElementById('history-list');
+  const badge  = document.getElementById('history-count-badge');
 
   if (history.length === 0) { panel.style.display = 'none'; return; }
   panel.style.display = 'block';
   badge.textContent   = history.length;
 
-  // Haal de actieve en vergelijkingssnapshot op voor markering
-  const activeDateNow  = activeSnapDate;
-  const compareDateNow = compareSnapDate ||
-    (() => {
-      // automatisch: eerstvolgende oudere datum tov actieve
-      const older = history.find(h => parseDutchDate(h.date) < parseDutchDate(activeDateNow));
-      return older ? older.date : null;
-    })();
+  // Bepaal welke datum automatisch als vergelijking geldt
+  const autoCompareDate = (() => {
+    const older = history.find(h => parseDutchDate(h.date) < parseDutchDate(activeSnapDate));
+    return older ? older.date : null;
+  })();
+  const effectiveCompare = compareSnapDate || autoCompareDate;
 
   list.innerHTML = history.map(snap => {
-    const isActive  = snap.date === activeDateNow;
-    const isCompare = snap.date === compareDateNow && !isActive;
-    const nStr = snap.storingSet.size;
+    const isActive  = snap.date === activeSnapDate;
+    const isCompare = snap.date === effectiveCompare && !isActive;
+    const nStr      = snap.storingSet.size;
 
     let tags = '';
     if (isActive)  tags += `<span class="history-item-tag current">Huidig</span>`;
     if (isCompare) tags += `<span class="history-item-tag compare">Vergelijking</span>`;
 
+    const viewBtn = !isActive
+      ? `<button class="history-action-btn view-btn" onclick="viewSnapshot('${snap.date}')">Bekijk</button>` : '';
+    const cmpBtn  = !isActive && !isCompare
+      ? `<button class="history-action-btn cmp-btn" onclick="setCompare('${snap.date}')">Vergelijk</button>`
+      : isCompare
+        ? `<button class="history-action-btn cmp-btn" onclick="clearCompare()">Wis vergelijking</button>` : '';
+    const delBtn  = `<button class="history-action-btn del-btn" onclick="deleteSnapshot('${snap.date}')">✕</button>`;
+
     return `
       <div class="history-item ${isActive?'active-snap':''} ${isCompare?'compare-snap':''}">
         <div class="history-item-date">${snap.date}</div>
-        <div class="history-item-meta">${snap.fileName || ''}</div>
+        <div class="history-item-meta">${snap.fileName||''}</div>
         <div class="history-item-storing">${nStr} storing${nStr!==1?'en':''}</div>
         ${tags}
-        <div class="history-actions">
-          ${!isActive ? `<button class="history-action-btn view-btn" onclick="viewSnapshot('${snap.date}')">Bekijk</button>` : ''}
-          ${!isActive && !isCompare ? `<button class="history-action-btn cmp-btn" onclick="setCompare('${snap.date}')">Vergelijk</button>` : ''}
-          ${isCompare ? `<button class="history-action-btn cmp-btn" onclick="clearCompare()">Wis vergelijking</button>` : ''}
-          <button class="history-action-btn del-btn" onclick="deleteSnapshot('${snap.date}')">✕</button>
-        </div>
+        <div class="history-actions">${viewBtn}${cmpBtn}${delBtn}</div>
       </div>`;
   }).join('');
 }
@@ -1535,13 +1333,12 @@ function viewSnapshot(date) {
   const snap = history.find(h => h.date === date);
   if (!snap) return;
   activeSnapDate  = date;
-  compareSnapDate = null;   // reset naar automatisch
+  compareSnapDate = null;
   renderDashboard(snap, snap.nOutScope || 0);
 }
 
 function setCompare(date) {
   compareSnapDate = date;
-  // Herlaad het actieve snapshot met de nieuwe vergelijking
   const snap = history.find(h => h.date === activeSnapDate);
   if (snap) renderDashboard(snap, snap.nOutScope || 0);
 }
@@ -1557,7 +1354,6 @@ function deleteSnapshot(date) {
   history = history.filter(h => h.date !== date);
   saveToStorage(history);
 
-  // Als het actieve snapshot verwijderd is, laad het volgende
   if (activeSnapDate === date) {
     activeSnapDate  = history.length > 0 ? history[0].date : null;
     compareSnapDate = null;
@@ -1565,10 +1361,11 @@ function deleteSnapshot(date) {
   if (compareSnapDate === date) compareSnapDate = null;
 
   if (history.length === 0) {
-    document.getElementById('dashboard').style.display   = 'none';
-    document.getElementById('empty-state').style.display = 'flex';
-    document.getElementById('history-panel').style.display = 'none';
-    document.getElementById('file-label').textContent = 'Sleep een .xls of .xlsx bestand hierheen';
+    document.getElementById('dashboard').style.display    = 'none';
+    document.getElementById('empty-state').style.display  = 'flex';
+    document.getElementById('history-panel').style.display= 'none';
+    document.getElementById('file-label').textContent     = 'Sleep een .xls of .xlsx bestand hierheen';
+    document.getElementById('compare-indicator').classList.remove('visible');
   } else {
     const snap = history.find(h => h.date === activeSnapDate) || history[0];
     activeSnapDate = snap.date;

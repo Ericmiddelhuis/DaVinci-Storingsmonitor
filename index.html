@@ -957,7 +957,6 @@ function loadFile(file) {
         const luslocatie = `A${row[iWEGNR]||''} ${row[iBAAN]||''} ${row[iKM]||''}+${row[iM]||''} Strook ${row[iSTRKNR]||''}`.trim();
         const os   = (row[iOSLOC]   || '').toString().trim();
         const type = (row[iLUSTYPE] || 'Onbekend').toString().trim();
-
         const entry = { wpCode, luslocatie, os, type, isStoring };
         rows.push(entry);
         if (isStoring) storingSet.add(wpCode);
@@ -1130,14 +1129,15 @@ function renderDashboard(snap, nOutScope) {
       </div>`).join('') ||
     '<div class="no-data">Geen storingen in scope</div>';
 
-  // Populate filters from ALL visible rows
+  // Filters vullen — trim zodat dropdown-waarden exact overeenkomen met data
   const allVisible = [...currentRows, ...fixedRows];
-  const types = [...new Set(allVisible.map(r=>r.type))].sort();
-  const oss   = [...new Set(allVisible.map(r=>r.os))].sort();
+  const types = [...new Set(allVisible.map(r => (r.type||'').trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'nl'));
+  const oss   = [...new Set(allVisible.map(r => (r.os  ||'').trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'nl'));
+
   document.getElementById('filter-type').innerHTML =
-    '<option value="">Alle lustypes</option>' + types.map(t=>`<option>${t}</option>`).join('');
+    '<option value="">Alle lustypes</option>' + types.map(t=>`<option value="${t}">${t}</option>`).join('');
   document.getElementById('filter-os').innerHTML =
-    '<option value="">Alle onderstations</option>' + oss.map(o=>`<option>${o}</option>`).join('');
+    '<option value="">Alle onderstations</option>' + oss.map(o=>`<option value="${o}">${o}</option>`).join('');
 
   window._allRows     = allVisible;
   window._currentRows = currentRows;
@@ -1152,22 +1152,25 @@ function renderDashboard(snap, nOutScope) {
 function switchTab(tab) {
   activeTab = tab;
 
-  // Button states
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   const el = document.getElementById('tab-' + tab);
   if (el) el.classList.add('active');
 
-  const allRows     = window._allRows    || [];
   const currentRows = window._currentRows || [];
   const fixedRows   = window._fixedRows   || [];
 
-  if (tab === 'all')     tableData = [...currentRows, ...fixedRows];
-  else if (tab === 'new')     tableData = compNew.map(r=>({...r,status:'new'}));
-  else if (tab === 'persist') tableData = compPersist.map(r=>({...r,status:'persist'}));
+  if      (tab === 'all')     tableData = [...currentRows, ...fixedRows];
+  else if (tab === 'new')     tableData = compNew.map(r=>({...r, status:'new'}));
+  else if (tab === 'persist') tableData = compPersist.map(r=>({...r, status:'persist'}));
   else if (tab === 'fixed')   tableData = fixedRows;
 
-  document.getElementById('list-count').textContent = tableData.filter(r=>r.status!=='fixed').length ||
-    (tab === 'fixed' ? fixedRows.length : tableData.length);
+  // Reset filters bij tabwissel zodat er geen verouderde selectie blijft hangen
+  document.getElementById('search').value       = '';
+  document.getElementById('filter-type').value  = '';
+  document.getElementById('filter-os').value    = '';
+
+  document.getElementById('list-count').textContent =
+    tab === 'fixed' ? fixedRows.length : tableData.filter(r=>r.status!=='fixed').length || tableData.length;
 
   page = 1;
   applyFilters();
@@ -1175,20 +1178,25 @@ function switchTab(tab) {
 
 // ── Filters & sort ─────────────────────────────────────────────
 function applyFilters() {
-  const q    = document.getElementById('search').value.toLowerCase();
-  const type = document.getElementById('filter-type').value;
-  const os   = document.getElementById('filter-os').value;
+  const q    = document.getElementById('search').value.toLowerCase().trim();
+  const type = document.getElementById('filter-type').value.trim();
+  const os   = document.getElementById('filter-os').value.trim();
 
-  filtered = tableData.filter(r =>
-    (!q    || (r.luslocatie||'').toLowerCase().includes(q) || (r.os||'').toLowerCase().includes(q)) &&
-    (!type || r.type === type) &&
-    (!os   || r.os   === os)
-  );
+  filtered = tableData.filter(r => {
+    const rLus  = (r.luslocatie || '').toLowerCase();
+    const rOs   = (r.os   || '').trim();
+    const rType = (r.type || '').trim();
+
+    const matchQ    = !q    || rLus.includes(q) || rOs.toLowerCase().includes(q);
+    const matchType = !type || rType === type;
+    const matchOs   = !os   || rOs   === os;
+    return matchQ && matchType && matchOs;
+  });
 
   filtered.sort((a,b) => {
-    const va = (a[sortKey]||'').toString().toLowerCase();
-    const vb = (b[sortKey]||'').toString().toLowerCase();
-    return sortAsc ? va.localeCompare(vb) : vb.localeCompare(va);
+    const va = (a[sortKey]||'').toString().toLowerCase().trim();
+    const vb = (b[sortKey]||'').toString().toLowerCase().trim();
+    return sortAsc ? va.localeCompare(vb, 'nl') : vb.localeCompare(va, 'nl');
   });
 
   page = 1;
